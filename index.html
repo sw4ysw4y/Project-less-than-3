@@ -9,16 +9,12 @@
 
 <script>
   const CONFIG = {
-    START_DATE: "2026-08-09T18:00:00",
-    TITLE_LINE: "since we started this...",
-    QUESTION: "Will you marry me?",
-    SUBTEXT: "Like Deadass...",
-    YES_TITLE: "YEEPEEOPPOEOEOE",
-    YES_MESSAGE: "HEHEHE CYUUU AT OUR WEDDDINGGGG",
+    START_DATE: "2026-08-09T20:00:00",
+    TITLE_LINE: "since we started its been...",
     BACKGROUND_IMAGE: "background.png"
-
   };
 </script>
+
 
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -72,7 +68,7 @@
   #boot .logo span.c { color: #2f8fdc; }
   #boot .logo span.d { color: #ffcf1c; }
   #boot .sub {
-    font-size: 14px;
+    font-size: 12px;
     color: #cfd8e3;
     margin-bottom: 30px;
     letter-spacing: 2px;
@@ -472,71 +468,6 @@
         <div class="arrow">▶</div>
         <div class="resize-corner"></div>
       </div>
-      <div class="action-row">
-        <button class="win-btn" id="ok-btn">OK</button>
-      </div>
-    </div>
-
-    <!-- SCREEN 2: the question -->
-    <div class="win hidden" id="win-question">
-      <div class="titlebar">
-        <div class="t"><span class="icon"></span><span class="label">Untitled - Notepad</span></div>
-        <div class="buttons"><div>_</div><div>▭</div><div>×</div></div>
-      </div>
-      <div class="menubar">
-        <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>S</u>earch</span><span><u>H</u>elp</span>
-      </div>
-      <div class="content-row">
-        <div class="doc">
-          <img class="art hidden" id="question-art" src="" alt="">
-          <span id="question-text"></span><br>
-          <span id="question-sub" style="font-size:11px;color:#333;"></span><span class="caret"></span>
-        </div>
-        <div class="vscroll">
-          <div class="arrow">▲</div>
-          <div class="track"><div class="thumb"></div></div>
-          <div class="arrow">▼</div>
-        </div>
-      </div>
-      <div class="hscroll">
-        <div class="arrow">◀</div>
-        <div class="track"><div class="thumb"></div></div>
-        <div class="arrow">▶</div>
-        <div class="resize-corner"></div>
-      </div>
-      <div class="action-row">
-        <button class="win-btn" id="yes-btn">Yes</button>
-        <button class="win-btn" id="no-btn">No</button>
-      </div>
-    </div>
-
-    <!-- SCREEN 3: yes result -->
-    <div class="win hidden" id="win-yes">
-      <div class="titlebar">
-        <div class="t"><span class="icon"></span><span class="label">Untitled - Notepad</span></div>
-        <div class="buttons"><div>_</div><div>▭</div><div>×</div></div>
-      </div>
-      <div class="menubar">
-        <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>S</u>earch</span><span><u>H</u>elp</span>
-      </div>
-      <div class="content-row">
-        <div class="doc">
-          <img class="art hidden" id="yes-art" src="" alt="">
-          <span id="yes-title"></span><br><br>
-          <span id="yes-message"></span><span class="caret"></span>
-        </div>
-        <div class="vscroll">
-          <div class="arrow">▲</div>
-          <div class="track"><div class="thumb"></div></div>
-          <div class="arrow">▼</div>
-        </div>
-      </div>
-      <div class="hscroll">
-        <div class="arrow">◀</div>
-        <div class="track"><div class="thumb"></div></div>
-        <div class="arrow">▶</div>
-        <div class="resize-corner"></div>
-      </div>
     </div>
 
   </div>
@@ -596,22 +527,6 @@
 
   // fill in text from CONFIG
   document.getElementById('title-line').textContent = CONFIG.TITLE_LINE;
-  document.getElementById('question-text').textContent = CONFIG.QUESTION;
-  document.getElementById('question-sub').textContent = CONFIG.SUBTEXT;
-  document.getElementById('yes-title').textContent = CONFIG.YES_TITLE;
-  document.getElementById('yes-message').textContent = CONFIG.YES_MESSAGE;
-
-  // optional images
-  if (CONFIG.QUESTION_IMAGE) {
-    const img = document.getElementById('question-art');
-    img.src = CONFIG.QUESTION_IMAGE;
-    img.classList.remove('hidden');
-  }
-  if (CONFIG.YES_IMAGE) {
-    const img = document.getElementById('yes-art');
-    img.src = CONFIG.YES_IMAGE;
-    img.classList.remove('hidden');
-  }
 
   // live counter
   const start = new Date(CONFIG.START_DATE);
@@ -631,56 +546,6 @@
   }
   tickCounter();
   setInterval(tickCounter, 1000);
-
-  // navigation between screens
-  const winCounter = document.getElementById('win-counter');
-  const winQuestion = document.getElementById('win-question');
-  const winYes = document.getElementById('win-yes');
-
-  document.getElementById('ok-btn').addEventListener('click', () => {
-    winCounter.classList.add('hidden');
-    winQuestion.classList.remove('hidden');
-  });
-
-  document.getElementById('yes-btn').addEventListener('click', () => {
-    winQuestion.classList.add('hidden');
-    winYes.classList.remove('hidden');
-    launchConfetti();
-  });
-
-  // the "No" button runs away
-  const noBtn = document.getElementById('no-btn');
-  const btnRow = noBtn.parentElement;
-  noBtn.addEventListener('click', dodgeNo);
-  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodgeNo(); }, {passive:false});
-
-  function dodgeNo(){
-    const rowRect = btnRow.getBoundingClientRect();
-    const btnRect = noBtn.getBoundingClientRect();
-    const maxX = rowRect.width - btnRect.width - 4;
-    const maxY = 60;
-    const x = (Math.random() * maxX * 2) - maxX;
-    const y = (Math.random() * maxY) - (maxY / 2);
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
-  }
-
-  // confetti burst
-  function launchConfetti(){
-    const wrap = document.createElement('div');
-    wrap.id = 'confetti-wrap';
-    document.body.appendChild(wrap);
-    const colors = ['#ff6a6a','#ffd166','#6ac1ff','#7cf29c','#d17cff'];
-    for (let i = 0; i < 60; i++){
-      const c = document.createElement('div');
-      c.className = 'confetti';
-      c.style.left = Math.random() * 100 + 'vw';
-      c.style.background = colors[Math.floor(Math.random()*colors.length)];
-      c.style.animationDuration = (2.5 + Math.random() * 2) + 's';
-      c.style.animationDelay = (Math.random() * 0.6) + 's';
-      wrap.appendChild(c);
-    }
-    setTimeout(() => wrap.remove(), 5000);
-  }
 </script>
 
 <script>
