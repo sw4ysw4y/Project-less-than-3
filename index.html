@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>a little something</title>
+<title>a little something - Retro WinXP</title>
 </head>
 <body>
 
@@ -14,7 +14,6 @@
     BACKGROUND_IMAGE: "background.png"
   };
 </script>
-
 
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -27,6 +26,7 @@
     overflow: hidden;
     font-family: Tahoma, Verdana, "Segoe UI", sans-serif;
     background: #1a3a6b;
+    user-select: none;
   }
 
   #desktop {
@@ -35,11 +35,53 @@
     background-image: var(--bg-url);
     background-size: cover;
     background-position: center;
+    padding: 14px;
+    padding-bottom: 56px; /* room for taskbar */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  /* ---------- Desktop Icons ---------- */
+  .desktop-icon {
+    width: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px 4px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.6);
+  }
+  .desktop-icon:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .desktop-icon:active {
+    background: rgba(10, 36, 106, 0.4);
+    border-color: rgba(10, 36, 106, 0.6);
+  }
+  .desktop-icon .ico {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 14px;
-    padding-bottom: 56px; /* room for taskbar */
+    font-size: 26px;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.4));
+  }
+  .desktop-icon span.label {
+    font-size: 11px;
+    line-height: 1.2;
+    word-break: break-word;
   }
 
   /* ---------- boot screen ---------- */
@@ -47,7 +89,7 @@
     position: fixed;
     inset: 0;
     background: #000;
-    z-index: 999;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -96,7 +138,7 @@
   }
   #boot.hide { opacity: 0; pointer-events: none; }
 
-  /* ---------- taskbar (classic gray theme) ---------- */
+  /* ---------- taskbar ---------- */
   #taskbar {
     position: fixed;
     left: 0; right: 0; bottom: 0;
@@ -123,10 +165,44 @@
     color: #000;
     font-weight: bold;
     font-size: 13px;
+    cursor: pointer;
   }
   #start-btn:active {
     box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4);
   }
+  #taskbar-tasks {
+    display: flex;
+    gap: 4px;
+    margin-left: 6px;
+    flex: 1;
+    overflow-x: auto;
+  }
+  .task-item {
+    height: 30px;
+    min-width: 110px;
+    max-width: 160px;
+    background: #d4d0c8;
+    border: 1px solid #fff;
+    border-right-color: #404040;
+    border-bottom-color: #404040;
+    padding: 0 8px;
+    font-size: 11.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .task-item.active {
+    background: #e6e6e6;
+    border-color: #404040;
+    border-right-color: #fff;
+    border-bottom-color: #fff;
+    font-weight: bold;
+  }
+
   #clock {
     margin-left: auto;
     color: #000;
@@ -138,17 +214,20 @@
     padding: 5px 10px;
   }
 
-  /* ---------- classic Notepad window ---------- */
+  /* ---------- Generic Windows XP Window ---------- */
   .win {
-    width: 100%;
-    max-width: 340px;
+    position: absolute;
+    width: 340px;
     background: #d4d0c8;
     border: 1px solid #0a0a0a;
     box-shadow: 3px 3px 14px rgba(0,0,0,0.5);
-    animation: pop 0.3s ease;
+    animation: pop 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
   }
   @keyframes pop {
-    from { transform: scale(0.9); opacity: 0; }
+    from { transform: scale(0.92); opacity: 0; }
     to   { transform: scale(1); opacity: 1; }
   }
 
@@ -161,22 +240,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: move;
+  }
+  .win.inactive .titlebar {
+    background: linear-gradient(90deg, #808080 0%, #b5b5b5 100%);
   }
   .titlebar .t { display:flex; align-items:center; gap:5px; overflow:hidden; }
-  .titlebar .icon {
-    width:14px; height:14px; flex:none;
-    background:
-      linear-gradient(#fff,#fff) padding-box,
-      #2255aa;
-    border: 1px solid #143a70;
-    position: relative;
-  }
-  .titlebar .icon::before {
-    content:"";
-    position:absolute; left:2px; right:2px; top:3px;
-    height:1px; background:#2255aa;
-    box-shadow: 0 3px 0 #2255aa, 0 6px 0 #2255aa;
-  }
   .titlebar .t span.label {
     white-space: nowrap;
     overflow: hidden;
@@ -184,7 +253,7 @@
     font-size: 12.5px;
   }
   .titlebar .buttons { display:flex; gap:2px; flex:none; }
-  .titlebar .buttons div {
+  .titlebar .buttons button {
     width: 17px; height: 15px;
     background: #d4d0c8;
     border: 1px solid #fff;
@@ -195,6 +264,17 @@
     display:flex; align-items:center; justify-content:center;
     line-height: 0;
     font-weight: bold;
+    padding: 0;
+    cursor: pointer;
+  }
+  .titlebar .buttons button:active {
+    border-color: #404040;
+    border-right-color: #fff;
+    border-bottom-color: #fff;
+  }
+  .titlebar .buttons button.close-btn {
+    background: #d94f4f;
+    color: #fff;
   }
 
   .menubar {
@@ -205,9 +285,10 @@
     padding: 3px 8px;
     font-size: 12px;
   }
-  .menubar span { text-decoration: none; }
+  .menubar span { text-decoration: none; cursor: default; }
   .menubar span u { text-decoration: underline; }
 
+  /* Notepad specific window styles */
   .content-row {
     display: flex;
     height: 220px;
@@ -225,6 +306,7 @@
     color: #000;
     overflow-y: auto;
     white-space: pre-wrap;
+    user-select: text;
   }
   .doc .caret {
     display: inline-block;
@@ -306,68 +388,136 @@
     flex: none;
   }
 
-  .action-row {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    padding: 10px 8px;
-    position: relative;
+  /* Photo Viewer Specific Styles */
+  #win-photos {
+    width: 420px;
+    max-width: 92vw;
   }
-
-  .win-btn {
-    font-family: Tahoma, Verdana, sans-serif;
-    font-size: 12px;
-    padding: 5px 20px;
+  .photo-body {
+    background: #fff;
+    border: 1px solid #808080;
+    padding: 10px;
+    height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .photo-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ece9d8;
+    padding: 6px;
+    border-bottom: 1px solid #aca899;
+  }
+  .photo-btn {
+    font-family: Tahoma, sans-serif;
+    font-size: 11px;
+    padding: 3px 8px;
     background: #d4d0c8;
     border: 1px solid #fff;
     border-right-color: #404040;
     border-bottom-color: #404040;
-    color: #000;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
-  .win-btn:active {
+  .photo-btn:active {
     border-color: #404040;
     border-right-color: #fff;
     border-bottom-color: #fff;
   }
-
-  #no-btn { transition: transform 0.15s ease; }
-
-  .art {
-    max-width: 100%;
-    max-height: 100px;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto 8px;
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
   }
-
-  #confetti-wrap {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 600;
+  .photo-card {
+    border: 1px solid #c0c0c0;
+    background: #fcfcfc;
+    padding: 4px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  }
+  .photo-card img {
+    width: 100%;
+    height: 70px;
+    object-fit: cover;
+    border: 1px solid #808080;
+    cursor: pointer;
+  }
+  .photo-card .caption {
+    font-size: 10px;
+    color: #333;
+    margin-top: 4px;
+    text-align: center;
+    word-break: break-all;
+    max-height: 24px;
     overflow: hidden;
   }
-  .confetti {
+  .photo-card .del-btn {
     position: absolute;
-    top: -10px;
-    width: 8px;
-    height: 14px;
-    opacity: 0.9;
-    animation: fall linear forwards;
-  }
-  @keyframes fall {
-    to { transform: translateY(110vh) rotate(540deg); opacity: 1; }
-  }
-
-  .hidden { display: none !important; }
-
-  #screens {
-    width: 100%;
-    display: flex;
+    top: 2px;
+    right: 2px;
+    background: rgba(217, 79, 79, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
     align-items: center;
     justify-content: center;
   }
+  .photo-card:hover .del-btn {
+    display: flex;
+  }
+  .empty-photos {
+    color: #777;
+    font-size: 12px;
+    text-align: center;
+    margin: auto;
+    font-style: italic;
+  }
+
+  /* Lightbox / Full view */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #lightbox img {
+    max-width: 90vw;
+    max-height: 75vh;
+    border: 3px solid #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  }
+  #lightbox .lb-caption {
+    color: #fff;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+  #lightbox .lb-close {
+    margin-top: 15px;
+  }
+
+  .hidden { display: none !important; }
 
   /* pink tone over the whole page, including the wallpaper */
   #pink-tint {
@@ -433,51 +583,100 @@
   }
 </style>
 
+<!-- Boot sequence screen -->
 <div id="boot">
   <div class="logo">retro<span>W</span><span class="b">i</span><span class="c">n</span><span class="d">XP</span></div>
   <div class="sub">STARTING UP...</div>
   <div class="bar"><div class="chunk"></div></div>
 </div>
 
+<!-- Desktop Environment -->
 <div id="desktop">
-  <div id="screens">
 
-    <!-- SCREEN 1: counter, styled as a Notepad doc -->
-    <div class="win" id="win-counter">
-      <div class="titlebar">
-        <div class="t"><span class="icon"></span><span class="label">Untitled - Notepad</span></div>
-        <div class="buttons"><div>_</div><div>▭</div><div>×</div></div>
-      </div>
-      <div class="menubar">
-        <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>S</u>earch</span><span><u>H</u>elp</span>
-      </div>
-      <div class="content-row">
-        <div class="doc">
-          <span id="title-line"></span><br><br>
-          <span class="counter-line" id="counter-display">calculating...</span><span class="caret"></span>
-        </div>
-        <div class="vscroll">
-          <div class="arrow">▲</div>
-          <div class="track"><div class="thumb"></div></div>
-          <div class="arrow">▼</div>
-        </div>
-      </div>
-      <div class="hscroll">
-        <div class="arrow">◀</div>
-        <div class="track"><div class="thumb"></div></div>
-        <div class="arrow">▶</div>
-        <div class="resize-corner"></div>
+  <!-- Desktop Icon: Notes.txt -->
+  <div class="desktop-icon" onclick="openWindow('win-counter')">
+    <div class="ico">📝</div>
+    <span class="label">Notes.txt</span>
+  </div>
+
+  <!-- Desktop Icon: Photos -->
+  <div class="desktop-icon" onclick="openWindow('win-photos')">
+    <div class="ico">🖼️</div>
+    <span class="label">My Photos</span>
+  </div>
+
+  <!-- WINDOW 1: Notepad (Counter) -->
+  <div class="win" id="win-counter" style="top: 80px; left: 40px;">
+    <div class="titlebar" onmousedown="startDragWindow(event, 'win-counter')">
+      <div class="t"><span class="icon">📄</span><span class="label">Notes.txt - Notepad</span></div>
+      <div class="buttons">
+        <button onclick="minimizeWindow('win-counter')">_</button>
+        <button onclick="toggleMaximize('win-counter')">▭</button>
+        <button class="close-btn" onclick="closeWindow('win-counter')">×</button>
       </div>
     </div>
-
+    <div class="menubar">
+      <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>S</u>earch</span><span><u>H</u>elp</span>
+    </div>
+    <div class="content-row">
+      <div class="doc">
+        <span id="title-line"></span><br><br>
+        <span class="counter-line" id="counter-display">calculating...</span><span class="caret"></span>
+      </div>
+      <div class="vscroll">
+        <div class="arrow">▲</div>
+        <div class="track"><div class="thumb"></div></div>
+        <div class="arrow">▼</div>
+      </div>
+    </div>
+    <div class="hscroll">
+      <div class="arrow">◀</div>
+      <div class="track"><div class="thumb"></div></div>
+      <div class="arrow">▶</div>
+      <div class="resize-corner"></div>
+    </div>
   </div>
+
+  <!-- WINDOW 2: Photo Viewer -->
+  <div class="win hidden" id="win-photos" style="top: 60px; left: 160px;">
+    <div class="titlebar" onmousedown="startDragWindow(event, 'win-photos')">
+      <div class="t"><span class="icon">🖼️</span><span class="label">Picture Viewer - [My Photos]</span></div>
+      <div class="buttons">
+        <button onclick="minimizeWindow('win-photos')">_</button>
+        <button onclick="toggleMaximize('win-photos')">▭</button>
+        <button class="close-btn" onclick="closeWindow('win-photos')">×</button>
+      </div>
+    </div>
+    <div class="photo-toolbar">
+      <label class="photo-btn">
+        ➕ Add Photo
+        <input type="file" id="photo-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+      </label>
+      <span style="font-size: 11px; color: #555;" id="photo-count">0 photos</span>
+    </div>
+    <div class="photo-body">
+      <div class="photo-grid" id="photo-grid"></div>
+      <div class="empty-photos" id="empty-photos">No photos uploaded yet.<br>Click "Add Photo" to add memories!</div>
+    </div>
+  </div>
+
 </div>
 
+<!-- Taskbar -->
 <div id="taskbar">
   <div id="start-btn">▦ Start</div>
+  <div id="taskbar-tasks"></div>
   <div id="clock">--:--</div>
 </div>
 
+<!-- Photo Lightbox -->
+<div id="lightbox" class="hidden">
+  <img id="lb-img" src="" alt="Full view">
+  <div class="lb-caption" id="lb-caption"></div>
+  <button class="photo-btn lb-close" onclick="closeLightbox()">Close Preview</button>
+</div>
+
+<!-- Cat Mascot -->
 <div id="mascot">
   <div class="mascot-inner" id="mascot-inner">
     <svg viewBox="0 0 100 70">
@@ -511,6 +710,8 @@
     setTimeout(() => {
       document.getElementById('boot').classList.add('hide');
     }, 1800);
+    renderPhotos();
+    updateTaskbar();
   });
 
   // clock
@@ -528,7 +729,7 @@
   // fill in text from CONFIG
   document.getElementById('title-line').textContent = CONFIG.TITLE_LINE;
 
-  // live counter
+  // live counter (starts from May 30th 2026)
   const start = new Date(CONFIG.START_DATE);
   function pad(n){ return String(n).padStart(2,'0'); }
   function tickCounter(){
@@ -546,6 +747,219 @@
   }
   tickCounter();
   setInterval(tickCounter, 1000);
+
+  /* ---------- Window Management System ---------- */
+  let topZIndex = 100;
+  const windows = {
+    'win-counter': { title: 'Notes.txt', icon: '📝' },
+    'win-photos': { title: 'My Photos', icon: '🖼️' }
+  };
+
+  function bringToFront(winId) {
+    const win = document.getElementById(winId);
+    if (!win) return;
+    topZIndex++;
+    win.style.zIndex = topZIndex;
+    
+    // Remove inactive class from active, add to others
+    document.querySelectorAll('.win').forEach(w => w.classList.add('inactive'));
+    win.classList.remove('inactive');
+    updateTaskbar();
+  }
+
+  function openWindow(winId) {
+    const win = document.getElementById(winId);
+    if (!win) return;
+    win.classList.remove('hidden');
+    bringToFront(winId);
+  }
+
+  function closeWindow(winId) {
+    const win = document.getElementById(winId);
+    if (win) {
+      win.classList.add('hidden');
+      updateTaskbar();
+    }
+  }
+
+  function minimizeWindow(winId) {
+    const win = document.getElementById(winId);
+    if (win) {
+      win.classList.add('hidden');
+      updateTaskbar();
+    }
+  }
+
+  function toggleMaximize(winId) {
+    const win = document.getElementById(winId);
+    if (!win) return;
+    if (win.getAttribute('data-maximized') === 'true') {
+      win.style.top = win.getAttribute('data-prev-top') || '60px';
+      win.style.left = win.getAttribute('data-prev-left') || '40px';
+      win.style.width = win.getAttribute('data-prev-width') || '340px';
+      win.style.height = 'auto';
+      win.setAttribute('data-maximized', 'false');
+    } else {
+      win.setAttribute('data-prev-top', win.style.top);
+      win.setAttribute('data-prev-left', win.style.left);
+      win.setAttribute('data-prev-width', win.style.width);
+      win.style.top = '0px';
+      win.style.left = '0px';
+      win.style.width = '100vw';
+      win.style.height = 'calc(100vh - 40px)';
+      win.setAttribute('data-maximized', 'true');
+    }
+  }
+
+  function updateTaskbar() {
+    const container = document.getElementById('taskbar-tasks');
+    container.innerHTML = '';
+    
+    Object.keys(windows).forEach(id => {
+      const win = document.getElementById(id);
+      if (win && !win.classList.contains('hidden')) {
+        const item = document.createElement('div');
+        const isActive = !win.classList.contains('inactive') && win.style.zIndex == topZIndex;
+        item.className = `task-item ${isActive ? 'active' : ''}`;
+        item.innerHTML = `<span>${windows[id].icon}</span><span>${windows[id].title}</span>`;
+        item.onclick = () => {
+          if (isActive) {
+            minimizeWindow(id);
+          } else {
+            openWindow(id);
+          }
+        };
+        container.appendChild(item);
+      }
+    });
+  }
+
+  // Draggable window logic
+  let activeDragWin = null;
+  let dragOffsetX = 0, dragOffsetY = 0;
+
+  function startDragWindow(e, winId) {
+    if (e.target.tagName === 'BUTTON') return;
+    bringToFront(winId);
+    const win = document.getElementById(winId);
+    if (win.getAttribute('data-maximized') === 'true') return;
+    
+    activeDragWin = win;
+    const rect = win.getBoundingClientRect();
+    dragOffsetX = (e.clientX || e.touches?.[0].clientX) - rect.left;
+    dragOffsetY = (e.clientY || e.touches?.[0].clientY) - rect.top;
+
+    window.addEventListener('mousemove', onDragWindow);
+    window.addEventListener('mouseup', stopDragWindow);
+    window.addEventListener('touchmove', onDragWindow, {passive: false});
+    window.addEventListener('touchend', stopDragWindow);
+  }
+
+  function onDragWindow(e) {
+    if (!activeDragWin) return;
+    const clientX = e.clientX || e.touches?.[0].clientX;
+    const clientY = e.clientY || e.touches?.[0].clientY;
+    
+    let x = clientX - dragOffsetX;
+    let y = clientY - dragOffsetY;
+    
+    // Contain within viewport bounds
+    x = Math.max(0, Math.min(x, window.innerWidth - 60));
+    y = Math.max(0, Math.min(y, window.innerHeight - 80));
+
+    activeDragWin.style.left = x + 'px';
+    activeDragWin.style.top = y + 'px';
+  }
+
+  function stopDragWindow() {
+    activeDragWin = null;
+    window.removeEventListener('mousemove', onDragWindow);
+    window.removeEventListener('mouseup', stopDragWindow);
+    window.removeEventListener('touchmove', onDragWindow);
+    window.removeEventListener('touchend', stopDragWindow);
+  }
+
+  /* ---------- Photo Viewer & Local Storage Logic ---------- */
+  function getStoredPhotos() {
+    try {
+      return JSON.parse(localStorage.getItem('xp_user_photos') || '[]');
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveStoredPhotos(photos) {
+    try {
+      localStorage.setItem('xp_user_photos', JSON.stringify(photos));
+    } catch(e) {
+      alert("Storage quota exceeded! Try deleting older photos.");
+    }
+  }
+
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const caption = prompt("Enter a caption for this photo:", file.name) || "Memory";
+      const photos = getStoredPhotos();
+      photos.unshift({
+        id: Date.now(),
+        src: event.target.result,
+        caption: caption
+      });
+      saveStoredPhotos(photos);
+      renderPhotos();
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // Reset input
+  }
+
+  function deletePhoto(id, e) {
+    e.stopPropagation();
+    let photos = getStoredPhotos();
+    photos = photos.filter(p => p.id !== id);
+    saveStoredPhotos(photos);
+    renderPhotos();
+  }
+
+  function renderPhotos() {
+    const grid = document.getElementById('photo-grid');
+    const emptyMsg = document.getElementById('empty-photos');
+    const countSpan = document.getElementById('photo-count');
+    const photos = getStoredPhotos();
+
+    grid.innerHTML = '';
+    countSpan.textContent = `${photos.length} photo${photos.length === 1 ? '' : 's'}`;
+
+    if (photos.length === 0) {
+      emptyMsg.classList.remove('hidden');
+    } else {
+      emptyMsg.classList.add('hidden');
+      photos.forEach(photo => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        card.onclick = () => openLightbox(photo.src, photo.caption);
+        card.innerHTML = `
+          <button class="del-btn" onclick="deletePhoto(${photo.id}, event)" title="Delete Photo">×</button>
+          <img src="${photo.src}" alt="${photo.caption}">
+          <div class="caption">${photo.caption}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  }
+
+  function openLightbox(src, caption) {
+    document.getElementById('lb-img').src = src;
+    document.getElementById('lb-caption').textContent = caption;
+    document.getElementById('lightbox').classList.remove('hidden');
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.add('hidden');
+  }
 </script>
 
 <script>
@@ -581,7 +995,6 @@
         } else {
           const dx = targetX - x;
           if (Math.abs(dx) < 2) {
-            // reached target, idle a bit then pick a new one
             mascot.classList.remove('walking');
             pausedUntil = now + 1200 + Math.random() * 2200;
             pickNewTarget();
