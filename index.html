@@ -11,7 +11,10 @@
   const CONFIG = {
     START_DATE: "2026-05-30T20:00:00",
     TITLE_LINE: "since we started its been...",
-    BACKGROUND_IMAGE: "background.png"
+    BACKGROUND_IMAGE: "background.png",
+    // Secret login credentials for adding photos
+    ADMIN_USER: "admin",
+    ADMIN_PASS: "iloveyou"
   };
 </script>
 
@@ -517,6 +520,67 @@
     margin-top: 15px;
   }
 
+  /* XP Error Login Modal Style */
+  #auth-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-window {
+    width: 380px;
+    background: #ece9d8;
+    border: 1px solid #0055ea;
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.5);
+  }
+  .auth-titlebar {
+    background: linear-gradient(90deg, #0a246a 0%, #3a6ea5 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .auth-body {
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .auth-icon {
+    font-size: 32px;
+  }
+  .auth-text {
+    font-size: 12px;
+    color: #000;
+    line-height: 1.4;
+  }
+  .auth-form {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .auth-form input {
+    padding: 4px 6px;
+    font-size: 12px;
+    border: 1px solid #7f9db9;
+    background: #fff;
+  }
+  .auth-footer {
+    background: #ece9d8;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #d4d0c8;
+  }
+
   .hidden { display: none !important; }
 
   /* pink tone over the whole page, including the wallpaper */
@@ -648,10 +712,11 @@
       </div>
     </div>
     <div class="photo-toolbar">
-      <label class="photo-btn">
+      <button class="photo-btn" onclick="requestUploadAccess()">
         ➕ Add Photo
-        <input type="file" id="photo-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-      </label>
+      </button>
+      <!-- Hidden file input triggered securely after auth -->
+      <input type="file" id="photo-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
       <span style="font-size: 11px; color: #555;" id="photo-count">0 photos</span>
     </div>
     <div class="photo-body">
@@ -674,6 +739,30 @@
   <img id="lb-img" src="" alt="Full view">
   <div class="lb-caption" id="lb-caption"></div>
   <button class="photo-btn lb-close" onclick="closeLightbox()">Close Preview</button>
+</div>
+
+<!-- Authentication Error Modal Prompt -->
+<div id="auth-modal" class="hidden">
+  <div class="auth-window">
+    <div class="auth-titlebar">
+      <span>System Error - Authentication Required</span>
+      <button onclick="closeAuthModal()" style="background:#d4d0c8; border:1px solid #fff; border-right-color:#404040; border-bottom-color:#404040; width:16px; height:14px; font-size:9px; cursor:pointer;">×</button>
+    </div>
+    <div class="auth-body">
+      <div class="auth-icon">⚠️</div>
+      <div style="flex: 1;">
+        <div class="auth-text" id="auth-msg"><strong>Access Denied (403):</strong> Administrative credentials required to upload images. Enter administrator username and password:</div>
+        <div class="auth-form">
+          <input type="text" id="auth-user" placeholder="Username">
+          <input type="password" id="auth-pass" placeholder="Password">
+        </div>
+      </div>
+    </div>
+    <div class="auth-footer">
+      <button class="photo-btn" onclick="verifyCredentials()">OK</button>
+      <button class="photo-btn" onclick="closeAuthModal()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <!-- Cat Mascot -->
@@ -761,7 +850,6 @@
     topZIndex++;
     win.style.zIndex = topZIndex;
     
-    // Remove inactive class from active, add to others
     document.querySelectorAll('.win').forEach(w => w.classList.add('inactive'));
     win.classList.remove('inactive');
     updateTaskbar();
@@ -863,7 +951,6 @@
     let x = clientX - dragOffsetX;
     let y = clientY - dragOffsetY;
     
-    // Contain within viewport bounds
     x = Math.max(0, Math.min(x, window.innerWidth - 60));
     y = Math.max(0, Math.min(y, window.innerHeight - 80));
 
@@ -877,6 +964,37 @@
     window.removeEventListener('mouseup', stopDragWindow);
     window.removeEventListener('touchmove', onDragWindow);
     window.removeEventListener('touchend', stopDragWindow);
+  }
+
+  /* ---------- Security & Authentication Logic ---------- */
+  function requestUploadAccess() {
+    // Check if already authenticated during this browser session
+    if (sessionStorage.getItem('xp_admin_auth') === 'true') {
+      document.getElementById('photo-upload').click();
+    } else {
+      document.getElementById('auth-user').value = '';
+      document.getElementById('auth-pass').value = '';
+      document.getElementById('auth-msg').innerHTML = '<strong>Access Denied (403):</strong> Administrative credentials required to upload images. Enter administrator username and password:';
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
+  }
+
+  function closeAuthModal() {
+    document.getElementById('auth-modal').classList.add('hidden');
+  }
+
+  function verifyCredentials() {
+    const u = document.getElementById('auth-user').value;
+    const p = document.getElementById('auth-pass').value;
+
+    if (u === CONFIG.ADMIN_USER && p === CONFIG.ADMIN_PASS) {
+      sessionStorage.setItem('xp_admin_auth', 'true');
+      closeAuthModal();
+      document.getElementById('photo-upload').click();
+    } else {
+      document.getElementById('auth-msg').innerHTML = '<span style="color:red; font-weight:bold;">Authentication Failed!</span> Incorrect username or password. Please try again:';
+      document.getElementById('auth-pass').value = '';
+    }
   }
 
   /* ---------- Photo Viewer & Local Storage Logic ---------- */
@@ -918,6 +1036,10 @@
 
   function deletePhoto(id, e) {
     e.stopPropagation();
+    if (sessionStorage.getItem('xp_admin_auth') !== 'true') {
+      alert("Unauthorized: Admin login required to delete photos.");
+      return;
+    }
     let photos = getStoredPhotos();
     photos = photos.filter(p => p.id !== id);
     saveStoredPhotos(photos);
@@ -970,7 +1092,7 @@
     const eyes = mascot.querySelectorAll('.cat-eye');
 
     let x = 20;
-    let dir = 1;         // 1 = facing right, -1 = facing left
+    let dir = 1;     // 1 = facing right, -1 = facing left
     let targetX = 20;
     let pausedUntil = 0;
     let dragging = false;
